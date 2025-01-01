@@ -19,6 +19,11 @@ public final class RemoteFeedLoader {
     private let url: URL
     private let client: HTTPClient
     
+    public enum Result: Equatable {
+        case success([FeedItem])
+        case failure(RemoteFeedLoader.Error)
+    }
+    
     public enum Error: Swift.Error {
         case conectivity
         case invalidData
@@ -29,13 +34,13 @@ public final class RemoteFeedLoader {
         self.url = url
     }
     
-    public func load(completion: @escaping (Error) -> Void) {
+    public func load(completion: @escaping (Result) -> Void) {
         client.get(from: url) { result in
             switch result {
             case .success:
-                completion(.invalidData)
+                completion(.failure(.invalidData))
             case .failure:
-                completion(.conectivity)
+                completion(.failure(.conectivity))
             }
         }
     }
