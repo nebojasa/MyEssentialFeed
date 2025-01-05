@@ -40,7 +40,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         // Given
         let url = URL(string: "https://a-given-url.com")!
         let (sut,client) = makeSUT(url: url)
-        expect(sut, toCompleteWith: .failure(.conectivity), onAction: {
+        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.conectivity), onAction: {
             let clientError = NSError(domain: "Test", code: 0)
             client.complete(with: clientError)
         })
@@ -51,7 +51,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let (sut,client) = makeSUT()
         let samples = [199, 201, 300, 400, 500]
         samples.enumerated().forEach { index, code in
-            expect(sut, toCompleteWith: .failure(.invalidData), onAction: {
+            expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), onAction: {
                 let jsonData = makeItemsJSON([])
                 client.complete(withStatusCode: code, data: jsonData, at: index)
             })
@@ -60,7 +60,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_deliversAnErrorOn200HTTPResponseWithInvalidJSON() {
         let (sut,client) = makeSUT()
-        expect(sut, toCompleteWith: .failure(.invalidData), onAction: {
+        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), onAction: {
             let invalidJSON = Data("invalid json".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
         })
@@ -100,7 +100,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         var sut: RemoteFeedLoader? = RemoteFeedLoader(url: url, client: client)
         
-        var capturedResults = [RemoteFeedLoader.Result]()
+        var capturedResults = [LoadFeedResult]()
         sut?.load { capturedResults.append($0) }
         sut = nil
         
@@ -151,7 +151,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     private func expect(
         _ sut: RemoteFeedLoader,
-        toCompleteWith expectedResult: RemoteFeedLoader.Result,
+        toCompleteWith expectedResult: LoadFeedResult,
         onAction: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -163,7 +163,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
             switch (receivedResult, expectedResult) {
             case let (.success(receivedItems), .success(expectedItems)):
                 XCTAssertEqual(receivedItems, expectedItems, file: file, line: line)
-            case let (.failure(receivedError), .failure(expectedError)):
+            case let (.failure(receivedError as RemoteFeedLoader.Error), .failure(expectedError as RemoteFeedLoader.Error)):
                 XCTAssertEqual(receivedError, expectedError, file: file, line: line)
             default:
                 XCTFail(
