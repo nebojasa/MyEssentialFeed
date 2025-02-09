@@ -92,3 +92,8 @@ fastlane/test_output
 /*.gcno
 
 # End of https://www.gitignore.io/api/swift,xcode
+EssentialFeed/EssentialFeed/.DS_Store
+EssentialFeed/EssentialFeedTests/Feed API/.DS_Store
+EssentialFeed/EssentialFeedTests/.DS_Store
+EssentialFeed/.DS_Store
+.DS_Store
