@@ -10,9 +10,13 @@ import EssentialFeed
 
 class FeedStore {
     var deleteCashedFeedCallCount = 0
-    
+    var insertCallCount = 0
     func deleteCashedFeed() {
         deleteCashedFeedCallCount += 1
+    }
+    
+    func completeDeletion(with error: Error, at index: Int = 0) {
+        
     }
 }
 
@@ -42,11 +46,27 @@ class CasheFeedUseCaseTests: XCTestCase {
         XCTAssertEqual(store.deleteCashedFeedCallCount, 1)
     }
     
+    func test_save_doesNotRequestsCacheInsertionOnDeletionError() {
+        let (sut, store) = makeSUT()
+        let items = [uniqueItem(), uniqueItem()]
+        let deletionError = anyNSerror()
+        
+        sut.save(items)
+        store.completeDeletion(with: deletionError)
+        
+        XCTAssertEqual(store.insertCallCount, 0)
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT() -> (sut: LocaleFeedLoader, store:FeedStore) {
+    private func makeSUT(file: StaticString = #filePath,
+                         line: UInt = #line) -> (sut: LocaleFeedLoader, store:FeedStore) {
         let store = FeedStore()
         let sut = LocaleFeedLoader(store: store)
+        
+        trackForMemoryLeaks(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        
         return (sut, store)
     }
     
@@ -56,6 +76,10 @@ class CasheFeedUseCaseTests: XCTestCase {
     
     private func anyURL() -> URL {
         URL(string: "https://www.any-URL.com")!
+    }
+    
+    private func anyNSerror() -> NSError {
+        NSError(domain: "any error", code: 0)
     }
 }
 
