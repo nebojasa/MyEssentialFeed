@@ -11,9 +11,13 @@ import XCTest
 
 class FeedStore {
     var deleteCasheFeedCount: Int = 0
-    
+    var insertCallCount: Int = 0
     func deleteCachedFeed() {
         deleteCasheFeedCount += 1
+    }
+
+    func completeDeletion(with error: Error, at index: Int = 0) {
+        
     }
 }
 
@@ -43,6 +47,15 @@ class CacheFeedUseCaseTests: XCTestCase {
         XCTAssertEqual(store.deleteCasheFeedCount, 1)
     }
     
+    func test_save_doesNotRequestsCasheInsertation_onDeletionError() throws {
+        let (sut, store) = makeSUT()
+        let items: [FeedItem] = [uniqueItem(), uniqueItem()]
+        let deletionError = anyNSError()
+        sut.save(items: items)
+        store.completeDeletion(with: deletionError)
+        XCTAssertEqual(store.insertCallCount, 0)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath,
@@ -56,6 +69,10 @@ class CacheFeedUseCaseTests: XCTestCase {
     
     private func anyURL() -> URL {
         return URL(string: "https://any-url.com")!
+    }
+    
+    private func anyNSError() -> NSError {
+        NSError(domain: "any error", code: 0)
     }
     
     private func uniqueItem() -> FeedItem {
