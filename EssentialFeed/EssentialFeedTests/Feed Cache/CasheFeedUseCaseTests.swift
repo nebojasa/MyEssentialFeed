@@ -19,15 +19,15 @@ class LocaleFeedLoader {
     }
     
     func save(_ items: [FeedItem], completion: @escaping (Error?) -> Void) {
-        store.deleteCashedFeed { [weak self] deletionError in
+        store.deleteCashedFeed { [weak self] error in
             guard let self else { return }
-            if deletionError == nil {
-                self.store.insert(items, timestamp: self.currentDate()) { [weak self] insertionError in
-                    guard self != nil else { return }
-                    completion(insertionError)
-                }
+            if let cacheDeletionError = error {
+                completion(cacheDeletionError)
             } else {
-                completion(deletionError)
+                self.store.insert(items, timestamp: self.currentDate()) { [weak self] casheInsertionError in
+                    guard self != nil else { return }
+                    completion(casheInsertionError)
+                }
             }
         }
     }
