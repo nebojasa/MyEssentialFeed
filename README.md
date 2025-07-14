@@ -200,7 +200,7 @@ Given the customer doesn't have connectivity
 | `id`          | `UUID`              |
 | `description` | `String` (optional) |
 | `location`    | `String` (optional) |
-| `url`            | `URL`               |
+| `url`         | `URL`               |
 
 ### Payload contract
 
