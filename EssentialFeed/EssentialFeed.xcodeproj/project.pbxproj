@@ -25,6 +25,7 @@
 		2FEF20FA2E2128E200EE00C9 /* LocaleFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEF20F72E2128E200EE00C9 /* LocaleFeedLoader.swift */; };
 		2FEF20FC2E253CCE00EE00C9 /* RemoteFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEF20FB2E253CCE00EE00C9 /* RemoteFeedItem.swift */; };
 		2FEF20FE2E253D3D00EE00C9 /* LocalFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEF20FD2E253D3D00EE00C9 /* LocalFeedItem.swift */; };
+		2FEF21002E25583D00EE00C9 /* LoadFeedFromCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEF20FF2E25582B00EE00C9 /* LoadFeedFromCacheUseCaseTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 		2FEF20F72E2128E200EE00C9 /* LocaleFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleFeedLoader.swift; sourceTree = "<group>"; };
 		2FEF20FB2E253CCE00EE00C9 /* RemoteFeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedItem.swift; sourceTree = "<group>"; };
 		2FEF20FD2E253D3D00EE00C9 /* LocalFeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFeedItem.swift; sourceTree = "<group>"; };
+		2FEF20FF2E25582B00EE00C9 /* LoadFeedFromCacheUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadFeedFromCacheUseCaseTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -156,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				2F030AB92D594EE6000AF972 /* CasheFeedUseCaseTests.swift */,
+				2FEF20FF2E25582B00EE00C9 /* LoadFeedFromCacheUseCaseTests.swift */,
 			);
 			path = "Feed Cache";
 			sourceTree = "<group>";
@@ -365,6 +368,7 @@
 				2F9E7BEE2D2F0057007795D1 /* XCTestCase+MemoryLeakDetection.swift in Sources */,
 				2F42B14D2D0E3CC5004DF00C /* LoadFeedFromRemoteUseCaseTests.swift in Sources */,
 				2F030ABA2D594EE6000AF972 /* CasheFeedUseCaseTests.swift in Sources */,
+				2FEF21002E25583D00EE00C9 /* LoadFeedFromCacheUseCaseTests.swift in Sources */,
 				2F9E7BEB2D2AFB95007795D1 /* URLSessionHTTPClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
