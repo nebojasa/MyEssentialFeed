@@ -16,9 +16,26 @@ class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     func test_load_requestsCacheRetreival() {
         let (sut, store) = makeSUT()
-        sut.load()
+        sut.load { _ in }
         XCTAssertEqual(store.receivedMessages, [.retrieve])
 
+    }
+    
+    func test_load_failsOnCacheRetrievalError() {
+        let (sut, store) = makeSUT()
+        let retrievalError = anyNSError()
+        var recevedError: Error?
+        let exp = expectation(description: "Wait for load completion")
+        sut.load { error in
+            recevedError = error
+            exp.fulfill()
+        }
+        
+        store.completeRetrieval(with: retrievalError)
+        
+        wait(for: [exp], timeout: 1.0)
+        
+        XCTAssertEqual(recevedError as NSError?, retrievalError)
     }
     
     // MARK: - Helpers
@@ -32,5 +49,9 @@ class LoadFeedFromCacheUseCaseTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, store)
+    }
+    
+    private func anyNSError() -> NSError {
+        NSError(domain: "any error", code: 0)
     }
 }

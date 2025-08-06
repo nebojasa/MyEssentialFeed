@@ -11,14 +11,15 @@ public final class LocaleFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
     public typealias SaveResult = Error?
+    public typealias RetrieveResult = Error?
     
     public init(store: FeedStore, currentDate: @escaping () -> Date) {
         self.store = store
         self.currentDate = currentDate
     }
     
-    public func load() {
-        return store.retrieve()
+    public func load(completion: @escaping (RetrieveResult) -> Void) {
+        store.retrieve(completion: completion)
     }
     
     public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
