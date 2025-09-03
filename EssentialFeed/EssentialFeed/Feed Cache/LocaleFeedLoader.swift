@@ -32,7 +32,10 @@ public final class LocaleFeedLoader {
             case .failure(let error):
                 store.deleteCashedFeed { _ in }
                 completion(.failure(error))
-            case .found, .empty:
+            case .found:
+                store.deleteCashedFeed { _ in }
+                completion(.success([]))
+            case .empty:
                 completion(.success([]))
             }
         }
