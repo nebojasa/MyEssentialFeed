@@ -31,7 +31,6 @@ public final class LocaleFeedLoader {
             case let .found(feed: feed, timestamp: timestamp) where self.validate(timestamp):
                 completion(.success(feed.toModels()))
             case .failure(let error):
-                self.store.deleteCashedFeed { _ in }
                 completion(.failure(error))
             case .found:
                 self.store.deleteCashedFeed { _ in }
@@ -40,6 +39,11 @@ public final class LocaleFeedLoader {
                 completion(.success([]))
             }
         }
+    }
+    
+    public func validateCache() {
+        store.retrieve { _ in }
+        store.deleteCashedFeed { _ in }
     }
     
     private func validate(_ timestamp: Date) -> Bool {
