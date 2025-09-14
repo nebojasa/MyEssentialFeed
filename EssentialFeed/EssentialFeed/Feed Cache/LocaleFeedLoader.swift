@@ -32,9 +32,7 @@ public final class LocaleFeedLoader {
                 completion(.success(feed.toModels()))
             case .failure(let error):
                 completion(.failure(error))
-            case .found:
-                completion(.success([]))
-            case .empty:
+            case .found, .empty:
                 completion(.success([]))
             }
         }
