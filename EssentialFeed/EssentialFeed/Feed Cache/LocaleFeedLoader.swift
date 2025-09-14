@@ -24,6 +24,13 @@ public final class LocaleFeedLoader {
         self.currentDate = currentDate
     }
     
+    private func validate(_ timestamp: Date) -> Bool {
+        guard let maxCachedAge = calendar.date(byAdding: .day, value: maxCachedAgeInDays, to: timestamp) else { return false }
+        return currentDate() < maxCachedAge
+    }
+}
+
+extension LocaleFeedLoader {
     public func load(completion: @escaping (LoadResult) -> Void) {
         store.retrieve { [weak self] result in
             guard let self else { return }
@@ -37,26 +44,9 @@ public final class LocaleFeedLoader {
             }
         }
     }
-    
-    public func validateCache() {
-        store.retrieve { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .failure:
-                self.store.deleteCashedFeed { _ in }
-            case let .found(_, timestamp) where !validate(timestamp):
-                self.store.deleteCashedFeed { _ in }
-            case .empty, .found : break
-            }
-        }
-    }
-    
-    private func validate(_ timestamp: Date) -> Bool {
-        
-        guard let maxCachedAge = calendar.date(byAdding: .day, value: maxCachedAgeInDays, to: timestamp) else { return false }
-        return currentDate() < maxCachedAge
-    }
-    
+}
+
+extension LocaleFeedLoader {
     public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
         store.deleteCashedFeed { [weak self] error in
             guard let self else { return }
@@ -73,6 +63,21 @@ public final class LocaleFeedLoader {
         store.insert(feed.toLocal(), timestamp: currentDate()) { [weak self] casheInsertionError in
             guard self != nil else { return }
             completion(casheInsertionError)
+        }
+    }
+}
+
+extension LocaleFeedLoader {
+    public func validateCache() {
+        store.retrieve { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .failure:
+                self.store.deleteCashedFeed { _ in }
+            case let .found(_, timestamp) where !validate(timestamp):
+                self.store.deleteCashedFeed { _ in }
+            case .empty, .found : break
+            }
         }
     }
 }
