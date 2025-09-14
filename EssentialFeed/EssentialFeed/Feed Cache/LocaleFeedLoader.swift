@@ -33,7 +33,6 @@ public final class LocaleFeedLoader {
             case .failure(let error):
                 completion(.failure(error))
             case .found:
-                self.store.deleteCashedFeed { _ in }
                 completion(.success([]))
             case .empty:
                 completion(.success([]))
@@ -46,10 +45,11 @@ public final class LocaleFeedLoader {
             switch result {
             case .failure:
                 self.store.deleteCashedFeed { _ in }
-            default: break
+            case let .found(_, timestamp) where !validate(timestamp):
+                self.store.deleteCashedFeed { _ in }
+            case .empty, .found : break
             }
         }
-        
     }
     
     private func validate(_ timestamp: Date) -> Bool {
