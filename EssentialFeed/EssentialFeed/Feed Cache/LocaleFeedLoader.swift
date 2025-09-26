@@ -7,24 +7,36 @@
 
 import Foundation
 
-public final class LocaleFeedLoader {
-    private let store: FeedStore
+private final class FeedCachePolicy {
     private let currentDate: () -> Date
     private let calendar = Calendar(identifier: .gregorian)
+    
+    init(currentDate: @escaping () -> Date) {
+        self.currentDate = currentDate
+    }
     
     private var maxCachedAgeInDays: Int {
         7
     }
+
+    func validate(_ timestamp: Date) -> Bool {
+        guard let maxCachedAge = calendar.date(byAdding: .day, value: maxCachedAgeInDays, to: timestamp) else { return false }
+        return currentDate() < maxCachedAge
+    }
+}
+
+public final class LocaleFeedLoader {
+    private let store: FeedStore
+    private let currentDate: () -> Date
+    private let cashePolicy: FeedCachePolicy
     
     public init(store: FeedStore, currentDate: @escaping () -> Date) {
         self.store = store
         self.currentDate = currentDate
+        self.cashePolicy = FeedCachePolicy(currentDate: currentDate)
     }
     
-    private func validate(_ timestamp: Date) -> Bool {
-        guard let maxCachedAge = calendar.date(byAdding: .day, value: maxCachedAgeInDays, to: timestamp) else { return false }
-        return currentDate() < maxCachedAge
-    }
+    
 }
 
 extension LocaleFeedLoader: FeedLoader {
@@ -34,7 +46,7 @@ extension LocaleFeedLoader: FeedLoader {
         store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
-            case let .found(feed: feed, timestamp: timestamp) where self.validate(timestamp):
+            case let .found(feed: feed, timestamp: timestamp) where self.cashePolicy.validate(timestamp):
                 completion(.success(feed.toModels()))
             case .failure(let error):
                 completion(.failure(error))
@@ -75,7 +87,7 @@ extension LocaleFeedLoader {
             switch result {
             case .failure:
                 self.store.deleteCashedFeed { _ in }
-            case let .found(_, timestamp) where !validate(timestamp):
+            case let .found(_, timestamp) where !self.cashePolicy.validate(timestamp):
                 self.store.deleteCashedFeed { _ in }
             case .empty, .found : break
             }
