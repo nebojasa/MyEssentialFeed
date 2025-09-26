@@ -27,4 +27,8 @@ extension Date {
     func adding(seconds: TimeInterval) -> Date {
         return self + seconds
     }
+    
+    func minusFeedCacheMaxAge() -> Date {
+       adding(days: -7)
+    }
 }
