@@ -8,13 +8,15 @@
 import Foundation
 
 private final class FeedCachePolicy {
-    private let calendar = Calendar(identifier: .gregorian)
+    private static let calendar = Calendar(identifier: .gregorian)
     
-    private var maxCachedAgeInDays: Int {
+    private static var maxCachedAgeInDays: Int {
         7
     }
+    
+    private init() {}
 
-    func validate(_ timestamp: Date, against date: Date) -> Bool {
+    static func validate(_ timestamp: Date, against date: Date) -> Bool {
         guard let maxCachedAge = calendar.date(byAdding: .day, value: maxCachedAgeInDays, to: timestamp) else { return false }
         return date < maxCachedAge
     }
@@ -23,7 +25,6 @@ private final class FeedCachePolicy {
 public final class LocaleFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
-    private let cashePolicy = FeedCachePolicy()
     
     public init(store: FeedStore, currentDate: @escaping () -> Date) {
         self.store = store
@@ -40,7 +41,7 @@ extension LocaleFeedLoader: FeedLoader {
         store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
-            case let .found(feed: feed, timestamp: timestamp) where self.cashePolicy.validate(timestamp, against: self.currentDate()):
+            case let .found(feed: feed, timestamp: timestamp) where FeedCachePolicy.validate(timestamp, against: self.currentDate()):
                 completion(.success(feed.toModels()))
             case .failure(let error):
                 completion(.failure(error))
@@ -81,7 +82,7 @@ extension LocaleFeedLoader {
             switch result {
             case .failure:
                 self.store.deleteCashedFeed { _ in }
-            case let .found(_, timestamp) where !self.cashePolicy.validate(timestamp, against: self.currentDate()):
+            case let .found(_, timestamp) where !FeedCachePolicy.validate(timestamp, against: self.currentDate()):
                 self.store.deleteCashedFeed { _ in }
             case .empty, .found : break
             }
