@@ -33,6 +33,31 @@ class CodableFeedStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
         XCTAssertEqual(retrivedResult, .empty)
     }
+    
+    func test_retreive_hasNoSideEffectsOnEmptyCache() {
+        let sut = CodableFeedStore()
+        let exp = expectation(description: "Wait for cache retreival")
+        var retrivedFirstResult: RetriveCachedFeedResult?
+        var retrivedSecondResult: RetriveCachedFeedResult?
+        
+        sut.retrieve { firstResult in
+            sut.retrieve { secondResult in
+                switch (firstResult, secondResult) {
+                case (.empty, .empty):
+                    retrivedFirstResult = firstResult
+                    retrivedSecondResult = secondResult
+                default :
+                    XCTFail("Expected empty result, got \(firstResult), \(secondResult) instead.")
+                }
+                exp.fulfill()
+            }
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        XCTAssertEqual(retrivedFirstResult, .empty)
+        XCTAssertEqual(retrivedSecondResult, .empty)
+        XCTAssertEqual(retrivedFirstResult, retrivedSecondResult)
+    }
 }
 
 extension RetriveCachedFeedResult: @retroactive Equatable {
