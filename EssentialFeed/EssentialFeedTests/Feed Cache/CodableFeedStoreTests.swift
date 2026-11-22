@@ -88,15 +88,9 @@ class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT()
         let feed = uniqueImageFeed().localItems
         let timestamp = Date()
-        let exp = expectation(description: "Wait for cache retreival")
         
-        sut.insert(feed, timestamp: timestamp) { insertionError in
-            XCTAssertNil(insertionError, "Expected the feed to be inserted successfully!")
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        insert((feed, timestamp), to: sut)
         expect(sut, toRetreive: .found(feed: feed, timestamp: timestamp))
-        
     }
     
     func test_retreive_hasNoSideEffectsOnNonEmptyCache() {
@@ -104,13 +98,7 @@ class CodableFeedStoreTests: XCTestCase {
         let feed = uniqueImageFeed().localItems
         let timestamp = Date()
         
-        let exp = expectation(description: "Wait for cache insertation")
-        sut.insert(feed, timestamp: timestamp) { insertionError in
-            XCTAssertNil(insertionError, "Expected the feed to be inserted successfully!")
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
-
+        insert((feed, timestamp), to: sut)
         expect(sut, toRetreiveTwice: .found(feed: feed, timestamp: timestamp))
     }
 
@@ -120,6 +108,15 @@ class CodableFeedStoreTests: XCTestCase {
         let sut = CodableFeedStore(storeURL: testsSpecificStoreURL())
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func insert(_ cashe: (feed: [LocalFeedImage], timestamp: Date), to sut: CodableFeedStore) {
+        let exp = expectation(description: "Wait for cache insertation")
+        sut.insert(cashe.feed, timestamp: cashe.timestamp) { insertionError in
+            XCTAssertNil(insertionError, "Expected the feed to be inserted successfully!")
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
     }
     
     private func expect(_ sut: CodableFeedStore, toRetreive expectedResult: RetriveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
