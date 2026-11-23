@@ -73,8 +73,12 @@ class CodableFeedStore {
             return completion(nil)
         }
         
-        try! FileManager.default.removeItem(at: storeURL)
-        completion(nil)
+        do {
+            try FileManager.default.removeItem(at: storeURL)
+            completion(nil)
+        } catch {
+            completion(error)
+        }
     }
 }
 
@@ -92,12 +96,12 @@ class CodableFeedStoreTests: XCTestCase {
 
     func test_retreive_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
-        expect(sut, toRetreive: .empty)
+        expect(sut, toRetrieve: .empty)
     }
     
     func test_retreive_hasNoSideEffectsOnEmptyCache() {
         let sut = makeSUT()
-        expect(sut, toRetreiveTwice: .empty)
+        expect(sut, toRetrieveTwice: .empty)
     }
     
     func test_retreive_deliversFoundValuesOnNonEmptyCache() {
@@ -106,7 +110,7 @@ class CodableFeedStoreTests: XCTestCase {
         let timestamp = Date()
         
         _ = insert((feed, timestamp), to: sut)
-        expect(sut, toRetreive: .found(feed: feed, timestamp: timestamp))
+        expect(sut, toRetrieve: .found(feed: feed, timestamp: timestamp))
     }
     
     func test_retreive_hasNoSideEffectsOnNonEmptyCache() {
@@ -115,7 +119,7 @@ class CodableFeedStoreTests: XCTestCase {
         let timestamp = Date()
         
         _ = insert((feed, timestamp), to: sut)
-        expect(sut, toRetreiveTwice: .found(feed: feed, timestamp: timestamp))
+        expect(sut, toRetrieveTwice: .found(feed: feed, timestamp: timestamp))
     }
     
     func test_retreive_deliversFailureOnRetreivalError() {
@@ -123,7 +127,7 @@ class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT(storeURL)
         try! "invalid.data".write(to: storeURL, atomically: false, encoding: .utf8)
         
-        expect(sut, toRetreive: .failure(anyNSError()))
+        expect(sut, toRetrieve: .failure(anyNSError()))
     }
     
     func test_retreive_deliversFailureOnRetreivalErrorTwice() {
@@ -131,7 +135,7 @@ class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT(storeURL)
         try! "invalid.data".write(to: storeURL, atomically: false, encoding: .utf8)
         
-        expect(sut, toRetreiveTwice: .failure(anyNSError()))
+        expect(sut, toRetrieveTwice: .failure(anyNSError()))
     }
     
     func test_insert_overridesPreviouslyInsertedCasheValues() {
@@ -145,7 +149,7 @@ class CodableFeedStoreTests: XCTestCase {
         let latestInsertionError = insert((feed: latestFeed, timestamp: latestTimestamp), to: sut)
         XCTAssertNil(latestInsertionError, "Expected to override cache successfully")
         
-        expect(sut, toRetreive: .found(feed: latestFeed, timestamp: latestTimestamp))
+        expect(sut, toRetrieve: .found(feed: latestFeed, timestamp: latestTimestamp))
     }
     
     func test_insert_deliversErrorOnInsertionError() {
@@ -162,7 +166,7 @@ class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT()
         let deletionError = deleteCache(from: sut)
         XCTAssertNil(deletionError, "Expected empty cache deletion to succeed")
-        expect(sut, toRetreive: .empty)
+        expect(sut, toRetrieve: .empty)
     }
     
     func test_delete_emptiesPreviouslyInsertedCache() {
@@ -171,7 +175,17 @@ class CodableFeedStoreTests: XCTestCase {
         
         let deletionError = deleteCache(from: sut)
         XCTAssertNil(deletionError, "Expected non-empty cache deletion to succeed")
-        expect(sut, toRetreive: .empty)
+        expect(sut, toRetrieve: .empty)
+    }
+    
+    func test_delete_deliversErrorOnDeletionError() {
+        let noDeletePermissionURL = cachesDirectory()
+        let sut = makeSUT(noDeletePermissionURL)
+        
+        let deletionError = deleteCache(from: sut)
+        
+        XCTAssertNotNil(deletionError, "Expected cache deletion to fail")
+        expect(sut, toRetrieve: .empty)
     }
 
     // MARK: - Helpers
@@ -204,7 +218,7 @@ class CodableFeedStoreTests: XCTestCase {
         return insertionError
     }
     
-    private func expect(_ sut: CodableFeedStore, toRetreive expectedResult: RetriveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
+    private func expect(_ sut: CodableFeedStore, toRetrieve expectedResult: RetriveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
         
         let exp = expectation(description: "Wait for cache retreival")
         sut.retrieve { retreivedResult in
@@ -224,9 +238,9 @@ class CodableFeedStoreTests: XCTestCase {
         
     }
     
-    private func expect(_ sut: CodableFeedStore, toRetreiveTwice expectedResult: RetriveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
-        expect(sut, toRetreive: expectedResult, file: file, line: line)
-        expect(sut, toRetreive: expectedResult, file: file, line: line)
+    private func expect(_ sut: CodableFeedStore, toRetrieveTwice expectedResult: RetriveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
     }
     
     private func testsSpecificStoreURL() -> URL {
@@ -243,6 +257,14 @@ class CodableFeedStoreTests: XCTestCase {
     
     private func deleteStoreArtifacts() {
         try? FileManager.default.removeItem(at: testsSpecificStoreURL())
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        return cachesDirectory().appendingPathComponent("\(type(of: self)).store")
+    }
+    
+    private func cachesDirectory() -> URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
 }
 
