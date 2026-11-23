@@ -42,7 +42,7 @@ final class ValidateFeedCacheUseCase: XCTestCase {
         
         sut.validateCache()
         
-        store.completeRetrieval(with: feed.localItems, timestamp: nonExpiredTimestamp)
+        store.completeRetrieval(with: feed.local, timestamp: nonExpiredTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
@@ -55,7 +55,7 @@ final class ValidateFeedCacheUseCase: XCTestCase {
         
         sut.validateCache()
         
-        store.completeRetrieval(with: feed.localItems, timestamp: expirationTimestamp)
+        store.completeRetrieval(with: feed.local, timestamp: expirationTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCacheFeed])
     }
@@ -68,7 +68,7 @@ final class ValidateFeedCacheUseCase: XCTestCase {
         
         sut.validateCache()
         
-        store.completeRetrieval(with: feed.localItems, timestamp: expiredTimestamp)
+        store.completeRetrieval(with: feed.local, timestamp: expiredTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCacheFeed])
     }

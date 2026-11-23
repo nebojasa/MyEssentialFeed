@@ -9,10 +9,10 @@ import Foundation
 import XCTest
 import EssentialFeed
 
-func uniqueImageFeed() -> (models: [FeedImage], localItems: [LocalFeedImage]) {
+func uniqueImageFeed() -> (models: [FeedImage], local: [LocalFeedImage]) {
     let items = [uniqueImage(), uniqueImage()]
     let localFeedItems = items.map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
-    return (models: items, localItems: localFeedItems)
+    return (models: items, local: localFeedItems)
 }
 
 func uniqueImage() -> FeedImage {
