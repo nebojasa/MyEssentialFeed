@@ -43,7 +43,7 @@ extension LocaleFeedLoader {
     public typealias SaveResult = Error?
 
     public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
-        store.deleteCashedFeed { [weak self] error in
+        store.deleteCachedFeed { [weak self] error in
             guard let self else { return }
             if let cacheDeletionError = error {
                 completion(cacheDeletionError)
@@ -68,9 +68,9 @@ extension LocaleFeedLoader {
             guard let self else { return }
             switch result {
             case .failure:
-                self.store.deleteCashedFeed { _ in }
+                self.store.deleteCachedFeed { _ in }
             case let .found(_, timestamp) where !FeedCachePolicy.validate(timestamp, against: self.currentDate()):
-                self.store.deleteCashedFeed { _ in }
+                self.store.deleteCachedFeed { _ in }
             case .empty, .found : break
             }
         }
