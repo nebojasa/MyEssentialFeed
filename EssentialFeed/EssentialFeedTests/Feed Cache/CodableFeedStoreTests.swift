@@ -215,53 +215,6 @@ class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         return sut
     }
     
-    private func deleteCache(from sut: FeedStore) -> Error? {
-        let exp = expectation(description: "Wait for cache deletion")
-        var deletionError: Error?
-        sut.deleteCachedFeed { receivedDeletionError in
-            deletionError = receivedDeletionError
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
-        return deletionError
-    }
-    
-    private func insert(_ cashe: (feed: [LocalFeedImage], timestamp: Date), to sut: FeedStore, file: StaticString = #file, line: UInt = #line) -> Error? {
-        let exp = expectation(description: "Wait for cache insertation")
-        var insertionError: Error?
-        sut.insert(cashe.feed, timestamp: cashe.timestamp) { receivedInsertionError in
-            insertionError = receivedInsertionError
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
-        return insertionError
-    }
-    
-    private func expect(_ sut: FeedStore, toRetrieve expectedResult: RetriveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
-        
-        let exp = expectation(description: "Wait for cache retreival")
-        sut.retrieve { retreivedResult in
-            switch (expectedResult, retreivedResult) {
-            case (.empty, .empty),
-                (.failure, .failure):
-                break
-            case let (.found(expected), .found(retreived)):
-                XCTAssertEqual(retreived.feed, expected.feed, file: file, line: line)
-                XCTAssertEqual(retreived.timestamp, expected.timestamp, file: file, line: line)
-            default :
-                XCTFail("Expected to retreive \(expectedResult), got \(retreivedResult) instead.", file: file, line: line)
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
-        
-    }
-    
-    private func expect(_ sut: FeedStore, toRetrieveTwice expectedResult: RetriveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
-        expect(sut, toRetrieve: expectedResult, file: file, line: line)
-        expect(sut, toRetrieve: expectedResult, file: file, line: line)
-    }
-    
     private func testsSpecificStoreURL() -> URL {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(type(of:self)).store")
     }
@@ -287,8 +240,8 @@ class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     }
 }
 
-extension RetriveCachedFeedResult: @retroactive Equatable {
-    public static func == (lhs: RetriveCachedFeedResult, rhs: RetriveCachedFeedResult) -> Bool {
+extension RetrieveCachedFeedResult: @retroactive Equatable {
+    public static func == (lhs: RetrieveCachedFeedResult, rhs: RetrieveCachedFeedResult) -> Bool {
         switch (lhs, rhs) {
         case (.empty, .empty):
             return true
