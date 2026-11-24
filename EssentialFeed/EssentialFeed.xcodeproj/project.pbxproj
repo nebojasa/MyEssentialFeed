@@ -37,6 +37,7 @@
 		2FFCC4CE30B590C600CC4303 /* FeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFCC4CD30B590C600CC4303 /* FeedStoreSpecs.swift */; };
 		2FFCC4D030B5922200CC4303 /* XCTestCase+FeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFCC4CF30B5922200CC4303 /* XCTestCase+FeedStoreSpecs.swift */; };
 		2FFCC4D330B5A2B800CC4303 /* CoreDataFeedStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFCC4D130B5A0C700CC4303 /* CoreDataFeedStoreTests.swift */; };
+		2FFCC4D530B5A35800CC4303 /* CoreDataFeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFCC4D430B5A35800CC4303 /* CoreDataFeedStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		2FFCC4CD30B590C600CC4303 /* FeedStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStoreSpecs.swift; sourceTree = "<group>"; };
 		2FFCC4CF30B5922200CC4303 /* XCTestCase+FeedStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FeedStoreSpecs.swift"; sourceTree = "<group>"; };
 		2FFCC4D130B5A0C700CC4303 /* CoreDataFeedStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFeedStoreTests.swift; sourceTree = "<group>"; };
+		2FFCC4D430B5A35800CC4303 /* CoreDataFeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFeedStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -237,6 +239,7 @@
 				2FEF20F72E2128E200EE00C9 /* LocaleFeedLoader.swift */,
 				2FB845082E8683670023B5BF /* FeedCachePolicy.swift */,
 				2FFCC4CB30B46C7A00CC4303 /* CodableFeedStore.swift */,
+				2FFCC4D430B5A35800CC4303 /* CoreDataFeedStore.swift */,
 			);
 			path = "Feed Cache";
 			sourceTree = "<group>";
@@ -399,6 +402,7 @@
 				2F9E7BE62D2898CA007795D1 /* HTTPClient.swift in Sources */,
 				080EDF0C21B6DAE800813479 /* FeedItem.swift in Sources */,
 				2F9E7BF02D2F3E8E007795D1 /* URLSessionHTTPClient.swift in Sources */,
+				2FFCC4D530B5A35800CC4303 /* CoreDataFeedStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
