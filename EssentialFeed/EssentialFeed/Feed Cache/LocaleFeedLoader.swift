@@ -9,7 +9,7 @@ import Foundation
 
 
 
-public final class LocaleFeedLoader {
+public final class LocalFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
     
@@ -21,7 +21,7 @@ public final class LocaleFeedLoader {
     
 }
 
-extension LocaleFeedLoader: FeedLoader {
+extension LocalFeedLoader: FeedLoader {
     public typealias LoadResult = LoadFeedResult
 
     public func load(completion: @escaping (LoadResult) -> Void) {
@@ -39,7 +39,7 @@ extension LocaleFeedLoader: FeedLoader {
     }
 }
 
-extension LocaleFeedLoader {
+extension LocalFeedLoader {
     public typealias SaveResult = Error?
 
     public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
@@ -62,7 +62,7 @@ extension LocaleFeedLoader {
     }
 }
 
-extension LocaleFeedLoader {
+extension LocalFeedLoader {
     public func validateCache() {
         store.retrieve { [weak self] result in
             guard let self else { return }
