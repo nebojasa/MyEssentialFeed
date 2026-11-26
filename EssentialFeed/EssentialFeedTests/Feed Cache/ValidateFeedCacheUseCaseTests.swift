@@ -75,7 +75,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     
     func test_validateChache_doesNotDeleteInvalidCacheAfterSUTInstanceHasBeenDealocated() {
         let store = FeedStoreSpy()
-        var sut: LocaleFeedLoader? = LocaleFeedLoader(store: store, currentDate: Date.init)
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
         sut?.validateCache()
         sut = nil
@@ -85,9 +85,9 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: LocaleFeedLoader, store: FeedStoreSpy) {
+                         line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
         let store = FeedStoreSpy()
-        let sut = LocaleFeedLoader(store: store, currentDate: currentDate)
+        let sut = LocalFeedLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)

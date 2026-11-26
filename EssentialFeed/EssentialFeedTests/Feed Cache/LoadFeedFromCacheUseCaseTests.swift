@@ -132,9 +132,9 @@ class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     func test_load_doesNotDeliverResultAfterSUTHasBeenDeallocated() {
         let store = FeedStoreSpy()
-        var sut: LocaleFeedLoader? = LocaleFeedLoader(store: store, currentDate: Date.init)
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
-        var receivedResults = [LocaleFeedLoader.LoadResult]()
+        var receivedResults = [LocalFeedLoader.LoadResult]()
         
         sut?.load { receivedResults.append($0)}
         sut = nil
@@ -146,9 +146,9 @@ class LoadFeedFromCacheUseCaseTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: LocaleFeedLoader, store: FeedStoreSpy) {
+                         line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
         let store = FeedStoreSpy()
-        let sut = LocaleFeedLoader(store: store, currentDate: currentDate)
+        let sut = LocalFeedLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
@@ -157,8 +157,8 @@ class LoadFeedFromCacheUseCaseTests: XCTestCase {
     }
     
     private func expect(
-        _ sut: LocaleFeedLoader,
-        toCompleteWith expectedResult: LocaleFeedLoader.LoadResult,
+        _ sut: LocalFeedLoader,
+        toCompleteWith expectedResult: LocalFeedLoader.LoadResult,
         when action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line

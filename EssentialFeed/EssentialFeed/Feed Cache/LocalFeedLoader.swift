@@ -1,5 +1,5 @@
 //
-//  LocaleFeedLoader.swift
+//  LocalFeedLoader.swift
 //  EssentialFeed
 //
 //  Created by Nebojša Gujaničić on 11. 7. 2025..

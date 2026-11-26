@@ -71,8 +71,8 @@ class CacheFeedUseCaseTests: XCTestCase {
     
     func test_save_doesNotDeliverDeletionError_afterSUTInstanceHasBeenDeallocated() {
         let store = FeedStoreSpy()
-        var sut: LocaleFeedLoader? = LocaleFeedLoader(store: store, currentDate: Date.init)
-        var receivedResults = [LocaleFeedLoader.SaveResult]()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
+        var receivedResults = [LocalFeedLoader.SaveResult]()
         sut?.save(uniqueImageFeed().models) { receivedResults.append($0) }
         
         sut = nil
@@ -83,8 +83,8 @@ class CacheFeedUseCaseTests: XCTestCase {
     
     func test_save_doesNotDeliverInsertionError_afterSUTInstanceHasBeenDeallocated() {
         let store = FeedStoreSpy()
-        var sut: LocaleFeedLoader? = LocaleFeedLoader(store: store, currentDate: Date.init)
-        var receivedResults = [LocaleFeedLoader.SaveResult]()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
+        var receivedResults = [LocalFeedLoader.SaveResult]()
         
         sut?.save(uniqueImageFeed().models) { receivedResults.append($0) }
         
@@ -98,7 +98,7 @@ class CacheFeedUseCaseTests: XCTestCase {
     // MARK: - Helpers
     
     private func expect(
-        _ sut: LocaleFeedLoader,
+        _ sut: LocalFeedLoader,
         toCompleteWithError expectedError: NSError?,
         when action: () -> Void,
         file: StaticString = #filePath,
@@ -119,9 +119,9 @@ class CacheFeedUseCaseTests: XCTestCase {
     }
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: LocaleFeedLoader, store: FeedStoreSpy) {
+                         line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
         let store = FeedStoreSpy()
-        let sut = LocaleFeedLoader(store: store, currentDate: currentDate)
+        let sut = LocalFeedLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
